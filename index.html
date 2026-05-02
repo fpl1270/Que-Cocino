@@ -359,6 +359,83 @@ body {
 @keyframes toastIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
 @keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateX(8px)}}
 
+
+/* ── MENU CONTROLS ─────────────────────── */
+.menu-controls{display:flex;align-items:center;gap:10px;margin-bottom:0}
+.filter-icon-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:0 14px;height:46px;border-radius:var(--r-md);border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text-2);font-family:inherit;font-size:13px;
+  font-weight:600;cursor:pointer;transition:all var(--t);white-space:nowrap;
+  flex-shrink:0;touch-action:manipulation;position:relative;
+}
+.filter-icon-btn:hover{background:var(--surface-2);border-color:var(--text-3);color:var(--text)}
+.filter-icon-btn.has-active{background:var(--primary-light);border-color:var(--primary);color:var(--primary)}
+.filter-badge{
+  position:absolute;top:-6px;right:-6px;width:18px;height:18px;
+  background:var(--primary);color:#fff;border-radius:50%;
+  font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--bg);
+}
+.active-chips{display:flex;align-items:center;gap:6px;margin-top:10px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;flex-wrap:nowrap;min-height:0}
+.active-chips:empty{margin-top:0}
+.active-chips::-webkit-scrollbar{display:none}
+.active-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px 5px 12px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--primary);color:#fff;border:none;cursor:pointer;touch-action:manipulation}
+.active-chip svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:.8}
+.clear-all-chip{display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--surface-2);color:var(--text-2);border:1.5px solid var(--border);cursor:pointer;touch-action:manipulation}
+.clear-all-chip:hover{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+.menu-bottom-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;margin-top:10px;gap:8px;min-height:28px}
+
+
+/* ── PERSISTENT FILTER CHIPS BAR ────────── */
+.filter-chips-bar{
+  display:flex;align-items:center;gap:8px;
+  overflow-x:auto;padding:10px 0 4px;
+  scrollbar-width:none;flex-wrap:nowrap;
+}
+.filter-chips-bar:empty{padding:0}
+.filter-chips-bar::-webkit-scrollbar{display:none}
+.pchip{
+  display:inline-flex;align-items:center;padding:7px 14px;
+  border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap;
+  border:1.5px solid var(--border);background:var(--surface);
+  color:var(--text-2);cursor:pointer;transition:all var(--t);
+  touch-action:manipulation;flex-shrink:0;
+}
+.pchip:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.pchip.active{border-color:var(--primary);background:var(--primary);color:#fff}
+
+/* ── DISH TAGS ──────────────────────────── */
+.dish-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.dish-tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;background:var(--surface-2);color:var(--text-2);white-space:nowrap}
+
+/* ── TAG PICKER ─────────────────────────── */
+.tag-picker{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.tag-pick-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:999px;font-size:13px;font-weight:600;border:1.5px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;transition:all var(--t);touch-action:manipulation}
+.tag-pick-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.tag-pick-btn.selected{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.new-tag-row{display:flex;gap:8px;margin-top:8px;width:100%}
+.new-tag-row .form-input{font-size:14px;padding:9px 12px}
+.new-tag-row .btn{padding:9px 14px;font-size:13px;flex-shrink:0}
+
+/* ── SORT & FILTER SHEET ─────────────────── */
+.sheet-section{padding:20px 22px 0}
+.sheet-section-title{font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.sort-options{display:flex;flex-direction:column;gap:8px}
+.sort-opt{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:var(--r-md);border:1.5px solid var(--border);background:var(--surface);cursor:pointer;transition:all var(--t);touch-action:manipulation}
+.sort-opt:hover{border-color:var(--primary);background:var(--primary-light)}
+.sort-opt.selected{border-color:var(--primary);background:var(--primary-light)}
+.sort-opt-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all var(--t)}
+.sort-opt.selected .sort-opt-radio{border-color:var(--primary);background:var(--primary)}
+.sort-opt.selected .sort-opt-radio::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+.sort-opt-label{font-size:14px;font-weight:600;color:var(--text);flex:1}
+.sort-opt-sub{font-size:12px;color:var(--text-3);margin-top:2px}
+.filter-chips-grid{display:flex;flex-wrap:wrap;gap:8px}
+.filter-chip-btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600;border:1.5px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;transition:all var(--t);touch-action:manipulation}
+.filter-chip-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.filter-chip-btn.active{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.sheet-divider{height:1px;background:var(--border);margin:20px 0 0}
+
 /* ── SCROLLBAR ─────────────────────────── */
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -434,6 +511,10 @@ body {
       </div>
     </div>
     <nav class="header-nav" aria-label="Main">
+      <button class="nav-tab" data-tab="dash">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Stats
+      </button>
       <button class="nav-tab active" data-tab="menu">
         <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3v7"/></svg>
         My Menu
@@ -442,15 +523,15 @@ body {
         <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Cook Log
       </button>
-      <button class="nav-tab" data-tab="dash">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        Dashboard
+      <button class="nav-tab" data-tab="settings">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
       </button>
     </nav>
     <div class="header-actions">
-      <button class="btn btn-primary" id="hdrAddBtn">
-        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Add Dish
+      <button class="btn btn-primary" id="hdrLogBtn">
+        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        Log Entry
       </button>
     </div>
   </header>
@@ -461,13 +542,22 @@ body {
     <!-- TAB: MY MENU -->
     <section id="tab-menu" class="tab-content active" aria-label="My Menu">
       <div class="container">
-        <div class="tab-bar">
+        <div class="menu-controls">
           <div class="search-wrap">
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input class="form-input" type="search" id="menuSearch" placeholder="Search dishes…" autocomplete="off" aria-label="Search dishes">
+            <input class="form-input" type="search" id="menuSearch" placeholder="Search your dishes…" autocomplete="off" aria-label="Search dishes">
           </div>
+          <button class="filter-icon-btn" id="filterBtn" aria-label="Sort and filter">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+            <span id="filterBtnLabel">Sort &amp; Filter</span>
+            <div class="filter-badge" id="filterBadge" style="display:none"></div>
+          </button>
+        </div>
+        <!-- Persistent filter chips row -->
+        <div class="filter-chips-bar" id="filterChipsBar"></div>
+        <div class="menu-bottom-bar">
           <span class="dish-count-label" id="dishCountLbl"></span>
-          <button class="btn btn-primary" id="tabAddBtn">
+          <button class="btn btn-primary btn-sm" id="tabAddBtn">
             <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Add Dish
           </button>
@@ -526,25 +616,43 @@ body {
       </div>
     </section>
 
+
+    <!-- SETTINGS TAB -->
+    <section id="tab-settings" class="tab-content">
+      <div class="container">
+        <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:60px 24px">
+          <div style="width:68px;height:68px;background:var(--surface-2);border-radius:18px;display:flex;align-items:center;justify-content:center;color:var(--text-3);margin-bottom:20px">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <h3 style="font-size:19px;font-weight:700;color:var(--text);margin-bottom:8px">Settings</h3>
+          <p style="font-size:14px;color:var(--text-2);line-height:1.55;max-width:280px">Settings and preferences coming soon. This space is reserved for future customization options.</p>
+        </div>
+      </div>
+    </section>
+
   </main><!-- /main -->
 
   <!-- MOBILE BOTTOM NAV -->
   <nav class="bottom-nav" aria-label="Main navigation">
     <div class="bottom-nav-inner">
+      <button class="bnav-btn" data-tab="dash" aria-label="Stats">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Stats
+      </button>
       <button class="bnav-btn active" data-tab="menu" aria-label="My Menu">
         <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3v7"/></svg>
         Menu
+      </button>
+      <button class="bnav-fab" id="fabBtn" aria-label="Log a meal">
+        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
       </button>
       <button class="bnav-btn" data-tab="log" aria-label="Cook Log">
         <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Log
       </button>
-      <button class="bnav-fab" id="fabBtn" aria-label="Add dish">
-        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      </button>
-      <button class="bnav-btn" data-tab="dash" aria-label="Dashboard">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        Stats
+      <button class="bnav-btn" data-tab="settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
       </button>
     </div>
   </nav>
@@ -569,10 +677,76 @@ body {
         <label class="form-label" for="dishDescInp">Description <span class="optional">optional</span></label>
         <textarea class="form-textarea" id="dishDescInp" placeholder="A quick note — ingredients, where you learned it, tips…"></textarea>
       </div>
+      <div class="form-group">
+        <label class="form-label">Tags <span class="optional">optional</span></label>
+        <div class="tag-picker" id="tagPicker"></div>
+        <div class="new-tag-row">
+          <input class="form-input" type="text" id="newTagInp" placeholder="Create new tag…" autocomplete="off" maxlength="24">
+          <button class="btn btn-ghost btn-sm" id="addTagBtn">Add</button>
+        </div>
+      </div>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" data-close="dishModal">Cancel</button>
       <button class="btn btn-primary" id="saveDishBtn">Save Dish</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SORT & FILTER SHEET -->
+<div class="modal-bg" id="filterModal" role="dialog" aria-modal="true">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-head">
+      <h2 class="modal-title">Sort &amp; Filter</h2>
+      <button class="icon-btn" data-close="filterModal" aria-label="Close">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="sheet-section">
+      <div class="sheet-section-title">Sort by</div>
+      <div class="sort-options" id="sortOptions"></div>
+    </div>
+    <div class="sheet-divider"></div>
+    <div class="sheet-section" style="padding-bottom:8px">
+      <div class="sheet-section-title">Filter by tag</div>
+      <div class="filter-chips-grid" id="filterChipsGrid"></div>
+    </div>
+    <div class="modal-foot" style="padding-top:16px">
+      <button class="btn btn-ghost" id="clearFiltersBtn">Clear All</button>
+      <button class="btn btn-primary" data-close="filterModal">Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: QUICK LOG SHEET (FAB) -->
+<div class="modal-bg" id="logSheetModal" role="dialog" aria-modal="true">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-head">
+      <h2 class="modal-title">Log a Meal 🍳</h2>
+      <button class="icon-btn" data-close="logSheetModal" aria-label="Close">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="padding:20px 22px;display:flex;flex-direction:column;gap:14px">
+      <div class="form-group">
+        <label class="form-label">What did you cook?</label>
+        <div style="position:relative">
+          <svg style="position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--text-3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="form-input" type="text" id="sheetLogInput" placeholder="Search or type a dish name…" autocomplete="off" style="padding-left:42px">
+          <div class="combo-drop" id="sheetComboDrop"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input class="form-input" type="date" id="sheetLogDate">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close="logSheetModal">Cancel</button>
+      <button class="btn btn-primary" id="sheetLogBtn">
+        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        Log it
+      </button>
     </div>
   </div>
 </div>
@@ -601,7 +775,7 @@ body {
    INDEXED DB
 ════════════════════════════════════════ */
 const DB_NAME = 'quecocino_db';
-const DB_VER  = 1;
+const DB_VER  = 2;
 let db;
 
 function openDB() {
@@ -609,10 +783,9 @@ function openDB() {
     const req = indexedDB.open(DB_NAME, DB_VER);
     req.onupgradeneeded = e => {
       const d = e.target.result;
-      if (!d.objectStoreNames.contains('dishes'))
-        d.createObjectStore('dishes', { keyPath: 'id' });
-      if (!d.objectStoreNames.contains('logs'))
-        d.createObjectStore('logs',   { keyPath: 'id' });
+      if (!d.objectStoreNames.contains('dishes'))   d.createObjectStore('dishes',   { keyPath:'id' });
+      if (!d.objectStoreNames.contains('logs'))     d.createObjectStore('logs',     { keyPath:'id' });
+      if (!d.objectStoreNames.contains('settings')) d.createObjectStore('settings', { keyPath:'key' });
     };
     req.onsuccess = e => res(e.target.result);
     req.onerror   = e => rej(e.target.error);
@@ -646,15 +819,41 @@ function dbDel(store, id) {
   });
 }
 
+const dbGet = (store, key) => new Promise((res, rej) => {
+  const tx  = db.transaction(store, 'readonly');
+  const req = tx.objectStore(store).get(key);
+  req.onsuccess = () => res(req.result);
+  req.onerror   = () => rej(req.error);
+});
+
+/* ════════════════════════════════════════
+   DEFAULT TAGS
+════════════════════════════════════════ */
+const DEFAULT_TAGS = [
+  { id:'tag_special',  label:'🎉 Special Occasion' },
+  { id:'tag_light',    label:'🥗 Light'             },
+  { id:'tag_quick',    label:'⚡ Quick'              },
+  { id:'tag_nothaw',   label:'🫙 No Thawing Needed' },
+  { id:'tag_micro',    label:'🌡️ Microwave'         },
+  { id:'tag_airfryer', label:'💨 Air Fryer'         },
+];
+
 /* ════════════════════════════════════════
    STATE  (in-memory mirror of IndexedDB)
 ════════════════════════════════════════ */
-let S = { dishes: [], logs: [] };
+let S = { dishes: [], logs: [], customTags: [] };
+let activeSort    = 'oldest'; // 'oldest' | 'newest' | 'az'
+let activeFilters = [];     // array of tag ids
+let selectedDishTagIds = []; // tags in dish modal
 
 async function loadAll() {
   S.dishes = await dbGetAll('dishes');
   S.logs   = await dbGetAll('logs');
+  const ct = await dbGet('settings', 'customTags');
+  S.customTags = ct ? ct.value : [];
 }
+const allTags = () => [...DEFAULT_TAGS, ...S.customTags];
+async function saveCustomTags() { await dbPut('settings', { key:'customTags', value:S.customTags }); }
 
 /* ════════════════════════════════════════
    UTILS
@@ -747,8 +946,16 @@ function renderMenu(q='') {
   const query = q.toLowerCase().trim();
   let dishes  = [...S.dishes];
   if (query) dishes = dishes.filter(d=>d.name.toLowerCase().includes(query)||(d.desc||'').toLowerCase().includes(query));
-  dishes.sort((a,b)=>a.name.localeCompare(b.name));
-  lbl.textContent = S.dishes.length ? `${S.dishes.length} dish${S.dishes.length!==1?'es':''}` : '';
+  // tag filter — hide untagged when any filter active
+  if (activeFilters.length > 0) {
+    dishes = dishes.filter(d => {
+      const dtags = d.tags || [];
+      return activeFilters.every(fid => dtags.includes(fid));
+    });
+  }
+  dishes = sortDishes(dishes);
+  renderFilterChipsBar();
+  lbl.textContent = S.dishes.length ? `${dishes.length} of ${S.dishes.length} dish${S.dishes.length!==1?'es':''}` : '';
   if (!S.dishes.length) {
     grid.innerHTML = `<div class="empty">
       <div class="empty-icon">${ico('chef',28)}</div>
@@ -946,21 +1153,25 @@ function closeModal(id) {
 let editingId = null;
 
 function openAddModal() {
-  editingId = null;
+  editingId = null; selectedDishTagIds = [];
   document.getElementById('dishModalTitle').textContent = 'Add Dish';
   document.getElementById('saveDishBtn').textContent    = 'Save Dish';
   document.getElementById('dishNameInp').value = '';
   document.getElementById('dishDescInp').value = '';
+  document.getElementById('newTagInp').value   = '';
+  renderTagPicker();
   openModal('dishModal');
 }
 
 function openEditModal(id) {
   const d = S.dishes.find(x=>x.id===id); if (!d) return;
-  editingId = id;
+  editingId = id; selectedDishTagIds = [...(d.tags||[])];
   document.getElementById('dishModalTitle').textContent = 'Edit Dish';
   document.getElementById('saveDishBtn').textContent    = 'Save Changes';
   document.getElementById('dishNameInp').value = d.name;
   document.getElementById('dishDescInp').value = d.desc||'';
+  document.getElementById('newTagInp').value   = '';
+  renderTagPicker();
   openModal('dishModal');
 }
 
@@ -975,7 +1186,7 @@ async function saveDish() {
   if (editingId) {
     const d = S.dishes.find(x=>x.id===editingId);
     if (d) {
-      d.name=name; d.desc=desc;
+      d.name=name; d.desc=desc; d.tags=selectedDishTagIds;
       await dbPut('dishes', d);
       // update any log entries
       const updates = S.logs.filter(l=>l.dishId===editingId);
@@ -983,13 +1194,196 @@ async function saveDish() {
     }
     toast('Dish updated!');
   } else {
-    const dish = { id:uid(), name, desc, createdAt:Date.now() };
+    const dish = { id:uid(), name, desc, tags:selectedDishTagIds, createdAt:Date.now() };
     S.dishes.push(dish);
     await dbPut('dishes', dish);
     toast('Dish added to your menu!');
   }
   closeModal('dishModal');
   if (currentTab==='menu') renderMenu(document.getElementById('menuSearch').value);
+  if (currentTab==='dash') renderDash();
+}
+
+
+/* ════════════════════════════════════════
+   SORT HELPERS
+════════════════════════════════════════ */
+const SORT_OPTS = [
+  { id:'oldest', label:'Oldest cooked first', sub:"Dishes you haven't made in a while — never cooked appear first" },
+  { id:'newest', label:'Newest cooked first', sub:'Most recently cooked dishes'                                     },
+  { id:'az',     label:'A → Z',              sub:'Alphabetical order'                                              },
+];
+
+function sortDishes(dishes) {
+  const copy = [...dishes];
+  if (activeSort === 'az') return copy.sort((a,b)=>a.name.localeCompare(b.name));
+  if (activeSort === 'oldest') return copy.sort((a,b)=>{
+    const la=getLastCooked(a.id), lb=getLastCooked(b.id);
+    if (!la&&!lb) return a.name.localeCompare(b.name);
+    if (!la) return -1; if (!lb) return 1;
+    return la.localeCompare(lb);
+  });
+  if (activeSort === 'newest') return copy.sort((a,b)=>{
+    const la=getLastCooked(a.id), lb=getLastCooked(b.id);
+    if (!la&&!lb) return a.name.localeCompare(b.name);
+    if (!la) return 1; if (!lb) return -1;
+    return lb.localeCompare(la);
+  });
+  return copy;
+}
+
+/* ════════════════════════════════════════
+   ACTIVE CHIPS
+════════════════════════════════════════ */
+function renderFilterChipsBar() {
+  const bar   = document.getElementById('filterChipsBar');
+  const btn   = document.getElementById('filterBtn');
+  const lbl   = document.getElementById('filterBtnLabel');
+  const badge = document.getElementById('filterBadge');
+  const tags  = allTags();
+
+  // Only show bar if there are tags to display
+  if (!tags.length) { bar.innerHTML = ''; return; }
+
+  bar.innerHTML = tags.map(t =>
+    `<button class="pchip ${activeFilters.includes(t.id)?'active':''}" data-ptag="${t.id}">${t.label}</button>`
+  ).join('');
+
+  // Update filter button badge
+  const total = (activeSort !== 'oldest' ? 1 : 0) + activeFilters.length;
+  if (total > 0) {
+    btn.classList.add('has-active');
+    badge.style.display = 'flex'; badge.textContent = total;
+    lbl.textContent = 'Filtered';
+  } else {
+    btn.classList.remove('has-active');
+    badge.style.display = 'none';
+    lbl.textContent = 'Sort & Filter';
+  }
+}
+
+/* ════════════════════════════════════════
+   TAG PICKER
+════════════════════════════════════════ */
+function renderTagPicker() {
+  const wrap = document.getElementById('tagPicker');
+  wrap.innerHTML = allTags().map(t =>
+    `<button class="tag-pick-btn ${selectedDishTagIds.includes(t.id)?'selected':''}" data-tagid="${t.id}">${t.label}</button>`
+  ).join('');
+}
+
+function bindTagPicker() {
+  document.getElementById('tagPicker').addEventListener('click', e => {
+    const btn = e.target.closest('[data-tagid]'); if (!btn) return;
+    const id = btn.dataset.tagid;
+    if (selectedDishTagIds.includes(id)) selectedDishTagIds = selectedDishTagIds.filter(x=>x!==id);
+    else selectedDishTagIds.push(id);
+    renderTagPicker();
+  });
+  document.getElementById('addTagBtn').addEventListener('click', async () => {
+    const inp = document.getElementById('newTagInp');
+    const label = inp.value.trim(); if (!label) return;
+    const newTag = { id: 'ctag_'+uid(), label };
+    S.customTags.push(newTag);
+    await saveCustomTags();
+    selectedDishTagIds.push(newTag.id);
+    inp.value = '';
+    renderTagPicker();
+    renderFilterChipsBar();
+    if (document.getElementById('filterModal').classList.contains('open')) renderFilterSheet();
+  });
+  document.getElementById('newTagInp').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('addTagBtn').click(); }
+  });
+}
+
+/* ════════════════════════════════════════
+   SORT & FILTER SHEET
+════════════════════════════════════════ */
+function renderFilterSheet() {
+  document.getElementById('sortOptions').innerHTML = SORT_OPTS.map(o=>`
+    <div class="sort-opt ${activeSort===o.id?'selected':''}" data-sortid="${o.id}">
+      <div class="sort-opt-radio"></div>
+      <div><div class="sort-opt-label">${o.label}</div><div class="sort-opt-sub">${o.sub}</div></div>
+    </div>`).join('');
+  document.querySelectorAll('[data-sortid]').forEach(el => {
+    el.addEventListener('click', () => {
+      activeSort = el.dataset.sortid;
+      document.querySelectorAll('[data-sortid]').forEach(x=>x.classList.toggle('selected', x.dataset.sortid===activeSort));
+    });
+  });
+  document.getElementById('filterChipsGrid').innerHTML = allTags().map(t=>
+    `<button class="filter-chip-btn ${activeFilters.includes(t.id)?'active':''}" data-filterid="${t.id}">${t.label}</button>`
+  ).join('');
+  document.querySelectorAll('[data-filterid]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const fid = btn.dataset.filterid;
+      if (activeFilters.includes(fid)) activeFilters = activeFilters.filter(x=>x!==fid);
+      else activeFilters.push(fid);
+      btn.classList.toggle('active', activeFilters.includes(fid));
+    });
+  });
+}
+
+function openFilterSheet() { renderFilterSheet(); openModal('filterModal'); }
+
+/* ════════════════════════════════════════
+   FAB LOG SHEET
+════════════════════════════════════════ */
+let sheetSelectedDishId = null;
+
+function openLogSheet() {
+  document.getElementById('sheetLogInput').value = '';
+  document.getElementById('sheetLogDate').value = todayStr();
+  sheetSelectedDishId = null;
+  document.getElementById('sheetComboDrop').classList.remove('open');
+  openModal('logSheetModal');
+}
+
+function setupSheetCombo() {
+  const input = document.getElementById('sheetLogInput');
+  const drop  = document.getElementById('sheetComboDrop');
+  input.addEventListener('input', () => {
+    sheetSelectedDishId = null;
+    const q = input.value.toLowerCase().trim();
+    if (!q) { drop.classList.remove('open'); drop.innerHTML=''; return; }
+    const matches = S.dishes.filter(d=>d.name.toLowerCase().includes(q)).slice(0,8);
+    if (!matches.length) {
+      drop.innerHTML = `<div class="combo-opt">${ico('plus')} <span>Log "<strong>${esc(input.value)}</strong>"</span></div>`;
+    } else {
+      drop.innerHTML = matches.map(d=>{
+        const b = lastCookedBadge(d.id);
+        return `<div class="combo-opt" data-id="${d.id}" data-name="${esc(d.name)}">${ico('chef')}<div><div>${esc(d.name)}</div><div class="combo-sub">${b.text}</div></div></div>`;
+      }).join('');
+      drop.querySelectorAll('.combo-opt[data-id]').forEach(opt=>{
+        const pick = e => { e.preventDefault(); input.value=opt.dataset.name; sheetSelectedDishId=opt.dataset.id; drop.classList.remove('open'); input.blur(); };
+        opt.addEventListener('mousedown', pick);
+        opt.addEventListener('touchend', pick);
+      });
+    }
+    drop.classList.add('open');
+  });
+  input.addEventListener('blur',  ()=>setTimeout(()=>drop.classList.remove('open'),200));
+  input.addEventListener('focus', ()=>{ if(input.value.trim()) input.dispatchEvent(new Event('input')); });
+  input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doSheetLog(); } });
+}
+
+async function doSheetLog() {
+  const input  = document.getElementById('sheetLogInput');
+  const dateEl = document.getElementById('sheetLogDate');
+  const name   = input.value.trim();
+  const date   = dateEl.value || todayStr();
+  if (!name) { input.focus(); return; }
+  if (sheetSelectedDishId && S.logs.some(l=>l.date===date&&l.dishId===sheetSelectedDishId)) {
+    toast('Already logged for this date!','err'); return;
+  }
+  const entry = { id:uid(), dishId:sheetSelectedDishId||null, dishName:name, date, loggedAt:Date.now() };
+  S.logs.push(entry);
+  await dbPut('logs', entry);
+  toast(`"${name}" logged!`);
+  closeModal('logSheetModal');
+  if (currentTab==='menu') renderMenu(document.getElementById('menuSearch').value);
+  if (currentTab==='log')  renderLogHistory();
   if (currentTab==='dash') renderDash();
 }
 
@@ -1086,8 +1480,34 @@ async function delLog(id) {
 ════════════════════════════════════════ */
 document.addEventListener('click', e=>{
   const tab     = e.target.closest('[data-tab]');     if (tab)    { switchTab(tab.dataset.tab); return; }
-  const closer  = e.target.closest('[data-close]');   if (closer) { closeModal(closer.dataset.close); return; }
-  if (e.target.classList.contains('modal-bg'))        { closeModal(e.target.id); return; }
+  const closer  = e.target.closest('[data-close]');   if (closer) {
+    closeModal(closer.dataset.close);
+    if (closer.dataset.close === 'filterModal') renderMenu(document.getElementById('menuSearch').value);
+    return;
+  }
+  if (e.target.classList.contains('modal-bg')) {
+    const mid = e.target.id; closeModal(mid);
+    if (mid === 'filterModal') renderMenu(document.getElementById('menuSearch').value);
+    return;
+  }
+  // Persistent filter chip toggle
+  const ptag = e.target.closest('[data-ptag]');
+  if (ptag) {
+    const fid = ptag.dataset.ptag;
+    if (activeFilters.includes(fid)) activeFilters = activeFilters.filter(x=>x!==fid);
+    else activeFilters.push(fid);
+    renderMenu(document.getElementById('menuSearch').value);
+    return;
+  }
+
+  const cf = e.target.closest('[data-clearfilter]');
+  if (cf) {
+    const v = cf.dataset.clearfilter;
+    if (v==='all') { activeSort='oldest'; activeFilters=[]; }
+    else if (v.startsWith('tag:')) { activeFilters=activeFilters.filter(x=>x!==v.slice(4)); }
+    renderMenu(document.getElementById('menuSearch').value);
+    return;
+  }
   const action  = e.target.closest('[data-action]');
   if (action) {
     const { action:act, id, name } = action.dataset;
@@ -1117,13 +1537,28 @@ async function init() {
   document.getElementById('appLoading').style.display = 'none';
 
   // Wire buttons
-  document.getElementById('hdrAddBtn').addEventListener('click', openAddModal);
+  document.getElementById('hdrLogBtn').addEventListener('click', openLogSheet);
   document.getElementById('tabAddBtn').addEventListener('click', openAddModal);
-  document.getElementById('fabBtn').addEventListener('click', openAddModal);
+  document.getElementById('fabBtn').addEventListener('click', openLogSheet);
   document.getElementById('saveDishBtn').addEventListener('click', saveDish);
   document.getElementById('logBtn').addEventListener('click', doLog);
   document.getElementById('menuSearch').addEventListener('input', e=>renderMenu(e.target.value));
   document.getElementById('dishNameInp').addEventListener('keydown', e=>{ if(e.key==='Enter') saveDish(); });
+
+  // Filter sheet
+  document.getElementById('filterBtn').addEventListener('click', openFilterSheet);
+  document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+    activeSort='oldest'; activeFilters=[];
+    renderFilterSheet();
+    renderMenu(document.getElementById('menuSearch').value);
+  });
+
+  // FAB log sheet
+  document.getElementById('sheetLogBtn').addEventListener('click', doSheetLog);
+  setupSheetCombo();
+
+  // Tag picker in dish modal
+  bindTagPicker();
   document.getElementById('logInput').addEventListener('keydown', e=>{ if(e.key==='Enter') doLog(); });
 
   // Combo + dates
