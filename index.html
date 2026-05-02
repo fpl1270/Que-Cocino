@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<!-- PWA / iOS Meta Tags -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Qué Cocino">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#C0481A">
+<meta name="description" content="Your personal cooking menu and meal tracker.">
+
+<title>¿Qué Cocino? · Chef Patron</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ── RESET ─────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── TOKENS ─────────────────────────────── */
+:root{
+  --primary:#C0481A; --primary-dark:#A03812; --primary-light:#FEF0EB;
+  --accent:#E8963A; --accent-light:#FEF6E8;
+  --bg:#FAF8F5; --surface:#FFFFFF; --surface-2:#F7F3EF;
+  --border:#EDE5DC; --border-2:#F2EBE3;
+  --text:#1A1512; --text-2:#7A6B61; --text-3:#B8ADA6;
+  --green:#1A7A48; --green-bg:#EDFAF3;
+  --amber:#B07209; --amber-bg:#FEF6E4;
+  --red:#C0481A; --red-bg:#FEF0EB;
+  --gray:#9E9189; --gray-bg:#F5F0EC;
+  --header-h:68px; --bottom-nav-h:60px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --max-w:1120px;
+  --r-xl:20px; --r-lg:14px; --r-md:10px; --r-sm:7px;
+  --shadow:0 2px 12px rgba(80,40,20,.07);
+  --shadow-md:0 4px 20px rgba(80,40,20,.11);
+  --shadow-lg:0 12px 40px rgba(80,40,20,.15);
+  --t:180ms ease;
+}
+
+/* ── ROOT LAYOUT — iOS Safari Fix ─────── */
+html {
+  height: 100%;
+  /* Prevent elastic bounce scroll on iOS from exposing the bg */
+  background: var(--bg);
+}
+body {
+  font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  /* Full height, no page-level scroll — scroll happens inside .main */
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* App shell fills exact viewport; dvh collapses with safari chrome, vh doesn't */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh; /* dynamic viewport — collapses address bar */
+  height: 100vh;  /* fallback for older safari */
+  overflow: hidden;
+}
+
+/* ── HEADER ─────────────────────────────── */
+.header{
+  flex-shrink: 0;
+  height:var(--header-h);
+  background:var(--surface); border-bottom:1px solid var(--border);
+  z-index:100; display:flex; align-items:center; padding:0 28px; gap:24px;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.brand-icon{
+  width:38px;height:38px;background:var(--primary);border-radius:var(--r-md);
+  display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;
+}
+.brand-text{display:flex;flex-direction:column;line-height:1.2}
+.brand-name{font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.3px}
+.brand-sub{font-size:11px;font-weight:500;color:var(--text-3);letter-spacing:.2px}
+.header-nav{display:flex;align-items:center;gap:4px;flex:1;justify-content:center}
+.nav-tab{
+  padding:8px 18px;border-radius:999px;border:none;background:transparent;
+  color:var(--text-2);font-family:inherit;font-size:14px;font-weight:600;
+  cursor:pointer;transition:all var(--t);white-space:nowrap;
+  display:flex;align-items:center;gap:7px;min-height:44px;
+}
+.nav-tab:hover{background:var(--surface-2);color:var(--text)}
+.nav-tab.active{background:var(--primary-light);color:var(--primary)}
+.nav-tab svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.header-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+
+/* ── MAIN SCROLL AREA ─────────────────── */
+.main{
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch; /* momentum scroll on iOS */
+  overscroll-behavior: contain;
+}
+.tab-content{display:none;animation:fadeUp .2s ease}
+.tab-content.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.container{max-width:var(--max-w);margin:0 auto;padding:24px 24px}
+
+/* ── LOADING SCREEN ─────────────────────── */
+.app-loading{
+  position:fixed;inset:0;background:var(--bg);z-index:999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+}
+.app-loading .brand-icon{width:56px;height:56px;border-radius:16px}
+.app-loading p{font-size:14px;color:var(--text-3);font-weight:500}
+.spinner{
+  width:28px;height:28px;border:3px solid var(--border);
+  border-top-color:var(--primary);border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── BUTTONS ─────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 20px;
+  border-radius:var(--r-md);border:none;font-family:inherit;font-size:14px;
+  font-weight:600;cursor:pointer;transition:all var(--t);white-space:nowrap;line-height:1;
+  min-height:44px; touch-action:manipulation;
+}
+.btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 4px 16px rgba(192,72,26,.32)}
+.btn-primary:active{transform:translateY(0);opacity:.9}
+.btn-ghost{background:transparent;color:var(--text-2);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--surface-2);border-color:var(--text-3);color:var(--text)}
+.btn-danger-soft{background:var(--red-bg);color:var(--red);border:1.5px solid transparent}
+.btn-danger-soft:hover{background:var(--red);color:#fff}
+.btn-sm{padding:8px 14px;font-size:13px;border-radius:var(--r-sm);min-height:36px}
+.btn-sm svg{width:13px;height:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+.icon-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:40px;min-height:40px;border-radius:var(--r-sm);border:none;
+  background:transparent;color:var(--text-3);cursor:pointer;transition:all var(--t);
+  flex-shrink:0; touch-action:manipulation;
+}
+.icon-btn:hover{background:var(--surface-2);color:var(--text)}
+.icon-btn.del:hover{background:var(--red-bg);color:var(--red)}
+.icon-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── FORMS ─────────────────────────────── */
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:13px;font-weight:600;color:var(--text-2);display:flex;align-items:center;gap:6px}
+.optional{font-size:11px;font-weight:500;color:var(--text-3);background:var(--surface-2);padding:2px 8px;border-radius:999px}
+.form-input,.form-textarea{
+  padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--r-md);
+  background:var(--surface);color:var(--text);font-family:inherit;font-size:16px;
+  /* 16px prevents iOS auto-zoom on focus */
+  font-weight:500;transition:border-color var(--t),box-shadow var(--t);outline:none;width:100%;
+  -webkit-appearance:none; appearance:none;
+}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--text-3);font-weight:400}
+.form-input:focus,.form-textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(192,72,26,.1)}
+.form-textarea{resize:vertical;min-height:90px;line-height:1.5}
+.search-wrap{position:relative;flex:1;min-width:0}
+.search-wrap svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--text-3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.search-wrap .form-input{padding-left:42px}
+
+/* ── BADGES ─────────────────────────────── */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;padding:4px 10px;
+  border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;
+}
+.badge svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.b-never{background:var(--gray-bg);color:var(--gray)}
+.b-today{background:var(--green-bg);color:var(--green)}
+.b-recent{background:var(--green-bg);color:var(--green)}
+.b-medium{background:var(--amber-bg);color:var(--amber)}
+.b-old{background:var(--red-bg);color:var(--red)}
+
+/* ── TAB BAR ─────────────────────────────── */
+.tab-bar{display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.sect-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px}
+.sect-title{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.2px}
+.sect-sub{font-size:14px;color:var(--text-2);margin-top:3px;font-weight:500}
+
+/* ── DISH GRID ─────────────────────────────── */
+.dish-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.dish-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--r-lg);padding:18px;display:flex;flex-direction:column;
+  gap:12px;transition:all var(--t);
+}
+.dish-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.dish-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.dish-card-actions{display:flex;align-items:center;gap:0;flex-shrink:0}
+.dish-name{font-size:16px;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:4px}
+.dish-desc{font-size:13px;color:var(--text-2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dish-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:10px;border-top:1px solid var(--border-2)}
+.dish-count-label{font-size:13px;font-weight:600;color:var(--text-3);white-space:nowrap;flex-shrink:0}
+
+/* ── EMPTY STATE ─────────────────────────────── */
+.empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:48px 24px;grid-column:1/-1}
+.empty-icon{width:64px;height:64px;background:var(--primary-light);border-radius:18px;display:flex;align-items:center;justify-content:center;color:var(--primary);margin-bottom:18px}
+.empty-icon svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.empty h3{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
+.empty p{font-size:14px;color:var(--text-2);line-height:1.55;margin-bottom:22px;max-width:300px}
+
+/* ── COOK LOG ─────────────────────────────── */
+.log-hero{
+  background:linear-gradient(135deg,var(--primary) 0%,#D95E2A 100%);
+  border-radius:var(--r-xl);padding:24px;color:#fff;margin-bottom:28px;
+}
+.log-hero-title{font-size:20px;font-weight:800;margin-bottom:4px;letter-spacing:-.3px}
+.log-hero-date{font-size:13px;font-weight:500;opacity:.75;margin-bottom:20px}
+.log-form{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.combo-wrap{position:relative;flex:1;min-width:200px}
+.combo-input-pos{position:relative}
+.combo-input-pos svg{
+  position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  width:16px;height:16px;stroke:rgba(255,255,255,.65);fill:none;
+  stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;
+}
+.log-input{
+  width:100%;padding:12px 14px 12px 40px;border:1.5px solid rgba(255,255,255,.3);
+  border-radius:var(--r-md);background:rgba(255,255,255,.15);color:#fff;
+  font-family:inherit;font-size:16px;font-weight:500;outline:none;transition:all var(--t);
+  -webkit-appearance:none; appearance:none;
+}
+.log-input::placeholder{color:rgba(255,255,255,.55);font-weight:400}
+.log-input:focus{border-color:rgba(255,255,255,.75);background:rgba(255,255,255,.22)}
+.log-date-input{
+  padding:12px 14px;border:1.5px solid rgba(255,255,255,.3);border-radius:var(--r-md);
+  background:rgba(255,255,255,.15);color:#fff;font-family:inherit;font-size:14px;
+  font-weight:500;outline:none;cursor:pointer;min-height:44px;-webkit-appearance:none;
+}
+.log-date-input::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.7;cursor:pointer}
+.log-btn-white{background:#fff;color:var(--primary);min-height:44px}
+.log-btn-white:hover{background:#f5f5f5}
+.combo-drop{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--r-md);box-shadow:var(--shadow-lg);z-index:200;
+  max-height:220px;overflow-y:auto;display:none;
+}
+.combo-drop.open{display:block}
+.combo-opt{
+  padding:12px 14px;font-size:14px;font-weight:500;color:var(--text);
+  cursor:pointer;transition:background var(--t);display:flex;align-items:center;gap:10px;
+  min-height:44px;
+}
+.combo-opt:hover,.combo-opt.hi{background:var(--primary-light);color:var(--primary)}
+.combo-opt svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.combo-sub{font-size:11px;color:var(--text-3);margin-top:1px}
+.log-group{margin-bottom:20px}
+.log-group-label{font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:8px;padding:0 2px}
+.log-entry{
+  background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-md);
+  padding:13px 16px;display:flex;align-items:center;gap:12px;margin-bottom:6px;
+}
+.log-entry-ico{
+  width:36px;height:36px;background:var(--primary-light);border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;color:var(--primary);flex-shrink:0;
+}
+.log-entry-ico svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.log-entry-name{font-size:15px;font-weight:600;color:var(--text)}
+.log-entry-meta{font-size:12px;color:var(--text-3);margin-top:2px}
+
+/* ── DASHBOARD ─────────────────────────────── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px}
+.stat-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:20px;display:flex;flex-direction:column;gap:4px}
+.stat-icon{width:38px;height:38px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.stat-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.stat-val{font-size:30px;font-weight:800;color:var(--text);letter-spacing:-1.5px;line-height:1}
+.stat-lbl{font-size:13px;font-weight:500;color:var(--text-2)}
+.dash-sect{margin-bottom:32px}
+.sug-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.sug-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--r-lg);padding:18px;display:flex;flex-direction:column;gap:12px;transition:all var(--t);
+}
+.sug-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md)}
+.sug-card.hot{border-color:var(--red);background:linear-gradient(145deg,#FEF0EB 0%,#fff 60%)}
+.sug-name{font-size:16px;font-weight:700;color:var(--text);line-height:1.3}
+.sug-desc{font-size:13px;color:var(--text-2)}
+.sug-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.pop-list{display:flex;flex-direction:column;gap:10px}
+.pop-item{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-md);padding:14px 16px;display:flex;align-items:center;gap:14px}
+.pop-rank{width:28px;height:28px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--text-3);flex-shrink:0}
+.pop-rank.gold{background:var(--accent-light);color:var(--accent)}
+.pop-name{flex:1;font-size:15px;font-weight:600;color:var(--text)}
+.pop-bar-bg{flex:2;height:6px;background:var(--surface-2);border-radius:999px;overflow:hidden}
+.pop-bar{height:100%;background:var(--primary);border-radius:999px;transition:width .6s ease}
+.pop-count{font-size:13px;font-weight:700;color:var(--text-2);min-width:36px;text-align:right}
+
+/* ── BOTTOM NAV (mobile only) ─────────── */
+.bottom-nav{
+  display:none;
+  flex-shrink: 0;
+  background:var(--surface);border-top:1px solid var(--border);z-index:100;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.bottom-nav-inner{
+  display:flex;align-items:center;height:var(--bottom-nav-h);padding:0 8px;
+}
+.bnav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;padding:8px 4px;background:none;border:none;color:var(--text-3);
+  font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;transition:color var(--t);
+  border-radius:var(--r-md);min-height:44px;min-width:44px;touch-action:manipulation;
+}
+.bnav-btn svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bnav-btn.active{color:var(--primary)}
+.bnav-fab{
+  width:52px;height:52px;background:var(--primary);border:none;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;
+  box-shadow:0 4px 18px rgba(192,72,26,.4);transition:all var(--t);flex-shrink:0;
+  position:relative;top:-6px;touch-action:manipulation;
+}
+.bnav-fab svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.bnav-fab:active{background:var(--primary-dark);transform:scale(.96)}
+
+/* ── MODAL ─────────────────────────────── */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(20,10,5,.5);z-index:300;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease;
+}
+.modal-bg.open{opacity:1;visibility:visible}
+.modal{
+  background:var(--surface);border-radius:var(--r-xl);width:100%;max-width:480px;
+  box-shadow:var(--shadow-lg);transform:translateY(16px) scale(.98);
+  transition:transform .25s ease;overflow:hidden;
+}
+.modal-bg.open .modal{transform:translateY(0) scale(1)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:22px 22px 0}
+.modal-title{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.2px}
+.modal-body{padding:20px 22px;display:flex;flex-direction:column;gap:16px}
+.modal-foot{padding:0 22px 22px;display:flex;gap:10px;justify-content:flex-end}
+
+/* ── TOAST ─────────────────────────────── */
+.toast-wrap{
+  position:fixed;top:80px;right:20px;z-index:500;
+  display:flex;flex-direction:column;gap:8px;pointer-events:none;
+}
+.toast{
+  background:var(--text);color:#fff;padding:12px 18px;border-radius:var(--r-md);
+  font-size:14px;font-weight:600;box-shadow:var(--shadow-lg);
+  display:flex;align-items:center;gap:10px;
+  animation:toastIn .25s ease, toastOut .25s ease 2.5s forwards;
+  max-width:300px;
+}
+.toast svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.toast.ok{background:var(--green)}
+.toast.err{background:var(--red)}
+@keyframes toastIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateX(8px)}}
+
+/* ── SCROLLBAR ─────────────────────────── */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:999px}
+
+/* ── RESPONSIVE: TABLET ─────────────────── */
+@media(max-width:960px){
+  .dish-grid{grid-template-columns:repeat(2,1fr)}
+  .sug-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ── RESPONSIVE: MOBILE ─────────────────── */
+@media(max-width:640px){
+  :root{ --header-h:56px; }
+  .header{padding:0 16px}
+  .header-nav,.header-actions{display:none}
+  .bottom-nav{display:block}
+  .container{padding:16px 16px 24px}
+  .dish-grid{grid-template-columns:1fr;gap:12px}
+  .stats-row{grid-template-columns:1fr;gap:10px}
+  .stat-card{flex-direction:row;align-items:center;padding:14px 16px;gap:14px}
+  .stat-icon{margin-bottom:0;flex-shrink:0}
+  .sug-grid{grid-template-columns:1fr;gap:12px}
+  .log-hero{padding:18px;border-radius:var(--r-lg);margin-bottom:20px}
+  .log-hero-title{font-size:18px}
+  .log-form{flex-direction:column;gap:8px}
+  .log-date-input,.log-btn-white{width:100%}
+  .log-btn-white{justify-content:center}
+  .tab-bar{gap:8px;flex-wrap:nowrap}
+  .tab-bar .dish-count-label{display:none}
+  /* Mobile modals slide up from bottom */
+  .modal-bg{align-items:flex-end;padding:0}
+  .modal{
+    max-width:100%;border-radius:var(--r-xl) var(--r-xl) 0 0;
+    transform:translateY(100%);max-height:90dvh;overflow-y:auto;
+  }
+  .modal-bg.open .modal{transform:translateY(0)}
+  /* Toasts above bottom nav */
+  .toast-wrap{
+    top:auto;bottom:calc(var(--bottom-nav-h) + env(safe-area-inset-bottom,0px) + 12px);
+    left:16px;right:16px;
+  }
+  .toast{max-width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div class="app-loading" id="appLoading">
+  <div class="brand-icon" style="width:56px;height:56px;background:var(--primary);border-radius:16px;display:flex;align-items:center;justify-content:center;">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3v7"/></svg>
+  </div>
+  <div class="spinner"></div>
+  <p>Loading your menu…</p>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="true"></div>
+
+<!-- APP SHELL -->
+<div class="app-shell">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3v7"/></svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">¿Qué Cocino?</span>
+        <span class="brand-sub">by Chef Patron</span>
+      </div>
+    </div>
+    <nav class="header-nav" aria-label="Main">
+      <button class="nav-tab active" data-tab="menu">
+        <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3v7"/></svg>
+        My Menu
+      </button>
+      <button class="nav-tab" data-tab="log">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Cook Log
+      </button>
+      <button class="nav-tab" data-tab="dash">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Dashboard
+      </button>
+    </nav>
+    <div class="header-actions">
+      <button class="btn btn-primary" id="hdrAddBtn">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Dish
+      </button>
+    </div>
+  </header>
+
+  <!-- SCROLLABLE MAIN -->
+  <main class="main" id="mainScroll">
+
+    <!-- TAB: MY MENU -->
+    <section id="tab-menu" class="tab-content active" aria-label="My Menu">
+      <div class="container">
+        <div class="tab-bar">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="form-input" type="search" id="menuSearch" placeholder="Search dishes…" autocomplete="off" aria-label="Search dishes">
+          </div>
+          <span class="dish-count-label" id="dishCountLbl"></span>
+          <button class="btn btn-primary" id="tabAddBtn">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Dish
+          </button>
+        </div>
+        <div class="dish-grid" id="dishGrid" role="list" aria-label="Your dishes"></div>
+      </div>
+    </section>
+
+    <!-- TAB: COOK LOG -->
+    <section id="tab-log" class="tab-content" aria-label="Cook Log">
+      <div class="container">
+        <div class="log-hero">
+          <p class="log-hero-title">What did you cook? 🍳</p>
+          <p class="log-hero-date" id="logHeroDate"></p>
+          <div class="log-form">
+            <div class="combo-wrap">
+              <div class="combo-input-pos">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input class="log-input" type="text" id="logInput" placeholder="Search or type a dish name…" autocomplete="off" aria-label="Dish name" aria-autocomplete="list" aria-controls="comboDrop">
+              </div>
+              <div class="combo-drop" id="comboDrop" role="listbox"></div>
+            </div>
+            <input class="log-date-input" type="date" id="logDate" aria-label="Date cooked">
+            <button class="btn log-btn-white" id="logBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+              Log it
+            </button>
+          </div>
+        </div>
+        <div class="sect-head"><h2 class="sect-title">Recent History</h2></div>
+        <div id="logHistory"></div>
+      </div>
+    </section>
+
+    <!-- TAB: DASHBOARD -->
+    <section id="tab-dash" class="tab-content" aria-label="Dashboard">
+      <div class="container">
+        <div class="stats-row" id="statsRow"></div>
+        <div class="dash-sect">
+          <div class="sect-head">
+            <div>
+              <h2 class="sect-title">Cook Again Soon</h2>
+              <p class="sect-sub">Dishes you haven't made in a while</p>
+            </div>
+          </div>
+          <div class="sug-grid" id="sugGrid"></div>
+        </div>
+        <div class="dash-sect">
+          <div class="sect-head"><h2 class="sect-title">Recent Activity</h2></div>
+          <div id="dashRecent"></div>
+        </div>
+        <div class="dash-sect">
+          <div class="sect-head"><h2 class="sect-title">Most Cooked</h2></div>
+          <div class="pop-list" id="popList"></div>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- /main -->
+
+  <!-- MOBILE BOTTOM NAV -->
+  <nav class="bottom-nav" aria-label="Main navigation">
+    <div class="bottom-nav-inner">
+      <button class="bnav-btn active" data-tab="menu" aria-label="My Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3v7"/></svg>
+        Menu
+      </button>
+      <button class="bnav-btn" data-tab="log" aria-label="Cook Log">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Log
+      </button>
+      <button class="bnav-fab" id="fabBtn" aria-label="Add dish">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+      <button class="bnav-btn" data-tab="dash" aria-label="Dashboard">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Stats
+      </button>
+    </div>
+  </nav>
+
+</div><!-- /app-shell -->
+
+<!-- MODAL: ADD / EDIT DISH -->
+<div class="modal-bg" id="dishModal" role="dialog" aria-modal="true" aria-labelledby="dishModalTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 class="modal-title" id="dishModalTitle">Add Dish</h2>
+      <button class="icon-btn" data-close="dishModal" aria-label="Close">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label" for="dishNameInp">Dish Name</label>
+        <input class="form-input" type="text" id="dishNameInp" placeholder="e.g. Arroz con Pollo, Pasta Carbonara…" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="dishDescInp">Description <span class="optional">optional</span></label>
+        <textarea class="form-textarea" id="dishDescInp" placeholder="A quick note — ingredients, where you learned it, tips…"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close="dishModal">Cancel</button>
+      <button class="btn btn-primary" id="saveDishBtn">Save Dish</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONFIRM DELETE -->
+<div class="modal-bg" id="confirmModal" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-head">
+      <h2 class="modal-title" id="confirmTitle">Remove dish?</h2>
+      <button class="icon-btn" data-close="confirmModal" aria-label="Close">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p id="confirmMsg" style="font-size:15px;color:var(--text-2);line-height:1.55"></p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close="confirmModal">Cancel</button>
+      <button class="btn btn-danger-soft" id="confirmOkBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════
+   INDEXED DB
+════════════════════════════════════════ */
+const DB_NAME = 'quecocino_db';
+const DB_VER  = 1;
+let db;
+
+function openDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('dishes'))
+        d.createObjectStore('dishes', { keyPath: 'id' });
+      if (!d.objectStoreNames.contains('logs'))
+        d.createObjectStore('logs',   { keyPath: 'id' });
+    };
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+function dbGetAll(store) {
+  return new Promise((res, rej) => {
+    const tx  = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = () => res(req.result);
+    req.onerror   = () => rej(req.error);
+  });
+}
+
+function dbPut(store, item) {
+  return new Promise((res, rej) => {
+    const tx  = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).put(item);
+    req.onsuccess = () => res(req.result);
+    req.onerror   = () => rej(req.error);
+  });
+}
+
+function dbDel(store, id) {
+  return new Promise((res, rej) => {
+    const tx  = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).delete(id);
+    req.onsuccess = () => res();
+    req.onerror   = () => rej(req.error);
+  });
+}
+
+/* ════════════════════════════════════════
+   STATE  (in-memory mirror of IndexedDB)
+════════════════════════════════════════ */
+let S = { dishes: [], logs: [] };
+
+async function loadAll() {
+  S.dishes = await dbGetAll('dishes');
+  S.logs   = await dbGetAll('logs');
+}
+
+/* ════════════════════════════════════════
+   UTILS
+════════════════════════════════════════ */
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const todayStr = () => new Date().toISOString().slice(0,10);
+const esc = s => !s ? '' : String(s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+  .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+function fmtDateLabel(d) {
+  const t = todayStr();
+  const yest = new Date(); yest.setDate(yest.getDate()-1);
+  if (d === t) return 'Today';
+  if (d === yest.toISOString().slice(0,10)) return 'Yesterday';
+  return new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+}
+function fmtShort(d) {
+  return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+function daysSince(d) {
+  const now = new Date(); now.setHours(0,0,0,0);
+  return Math.round((now - new Date(d+'T00:00:00'))/864e5);
+}
+function getLastCooked(id) {
+  const e = S.logs.filter(l=>l.dishId===id).sort((a,b)=>b.date.localeCompare(a.date));
+  return e.length ? e[0].date : null;
+}
+function lastCookedBadge(id) {
+  const last = getLastCooked(id);
+  if (!last) return { text:'Never cooked', cls:'b-never', ico:'clock' };
+  const d = daysSince(last);
+  if (d===0) return { text:'Cooked today', cls:'b-today',  ico:'check' };
+  if (d<=1)  return { text:'Yesterday',    cls:'b-recent', ico:'clock' };
+  if (d<7)   return { text:`${d} days ago`,cls:'b-recent', ico:'clock' };
+  if (d<30)  return { text:`${d} days ago`,cls:'b-medium', ico:'clock' };
+  return       { text:`${d} days ago`,     cls:'b-old',    ico:'clock' };
+}
+
+/* ════════════════════════════════════════
+   SVG ICONS
+════════════════════════════════════════ */
+const ICO = {
+  check:  '<path d="M20 6L9 17l-5-5"/>',
+  clock:  '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  plus:   '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  edit:   '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>',
+  trash:  '<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  chef:   '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3v7"/>',
+  search: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  cal:    '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  bar:    '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  x:      '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+};
+const ico = (name, s=16) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICO[name]||''}</svg>`;
+
+/* ════════════════════════════════════════
+   TOAST
+════════════════════════════════════════ */
+function toast(msg, type='ok') {
+  const w = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `${ico(type==='ok'?'check':'x')} <span>${msg}</span>`;
+  w.appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+
+/* ════════════════════════════════════════
+   TABS
+════════════════════════════════════════ */
+let currentTab = 'menu';
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  document.getElementById('mainScroll').scrollTop = 0;
+  if (tab==='menu') renderMenu();
+  if (tab==='log')  renderLog();
+  if (tab==='dash') renderDash();
+}
+
+/* ════════════════════════════════════════
+   RENDER: MENU
+════════════════════════════════════════ */
+function renderMenu(q='') {
+  const grid  = document.getElementById('dishGrid');
+  const lbl   = document.getElementById('dishCountLbl');
+  const query = q.toLowerCase().trim();
+  let dishes  = [...S.dishes];
+  if (query) dishes = dishes.filter(d=>d.name.toLowerCase().includes(query)||(d.desc||'').toLowerCase().includes(query));
+  dishes.sort((a,b)=>a.name.localeCompare(b.name));
+  lbl.textContent = S.dishes.length ? `${S.dishes.length} dish${S.dishes.length!==1?'es':''}` : '';
+  if (!S.dishes.length) {
+    grid.innerHTML = `<div class="empty">
+      <div class="empty-icon">${ico('chef',28)}</div>
+      <h3>Your menu is empty</h3>
+      <p>Add the dishes you know how to cook. Think of it as your personal restaurant menu.</p>
+      <button class="btn btn-primary" id="emptyAddBtn">${ico('plus')} Add your first dish</button>
+    </div>`;
+    document.getElementById('emptyAddBtn')?.addEventListener('click', openAddModal);
+    return;
+  }
+  if (!dishes.length) {
+    grid.innerHTML = `<div class="empty">
+      <div class="empty-icon" style="background:var(--surface-2);color:var(--text-3)">${ico('search',26)}</div>
+      <h3>No results</h3>
+      <p>No dishes match "<strong>${esc(q)}</strong>". Try something different.</p>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = dishes.map(d=>{
+    const b = lastCookedBadge(d.id);
+    const loggedToday = S.logs.some(l=>l.date===todayStr()&&l.dishId===d.id);
+    return `<div class="dish-card" role="listitem">
+      <div class="dish-card-top">
+        <div style="flex:1;min-width:0">
+          <div class="dish-name">${esc(d.name)}</div>
+          ${d.desc?`<div class="dish-desc">${esc(d.desc)}</div>`:''}
+        </div>
+        <div class="dish-card-actions">
+          <button class="icon-btn" data-action="edit" data-id="${d.id}" aria-label="Edit ${esc(d.name)}">${ico('edit')}</button>
+          <button class="icon-btn del" data-action="del" data-id="${d.id}" aria-label="Delete ${esc(d.name)}">${ico('trash')}</button>
+        </div>
+      </div>
+      <div class="dish-foot">
+        <span class="badge ${b.cls}">${ico(b.ico)} ${b.text}</span>
+        <button class="btn btn-sm ${loggedToday?'btn-ghost':'btn-primary'}"
+          data-action="quicklog" data-id="${d.id}" data-name="${esc(d.name)}"
+          ${loggedToday?'disabled':''}>
+          ${loggedToday?`${ico('check')} Logged`:'Log Today'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ════════════════════════════════════════
+   RENDER: LOG
+════════════════════════════════════════ */
+function renderLog() {
+  const now = new Date();
+  document.getElementById('logHeroDate').textContent =
+    now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const di = document.getElementById('logDate');
+  if (!di.value) di.value = todayStr();
+  renderLogHistory();
+}
+
+function renderLogHistory() {
+  const cont = document.getElementById('logHistory');
+  if (!S.logs.length) {
+    cont.innerHTML = `<div class="empty" style="padding:36px 0">
+      <div class="empty-icon">${ico('cal',26)}</div>
+      <h3>Nothing logged yet</h3>
+      <p>Use the form above to start tracking. Your history builds here.</p>
+    </div>`;
+    return;
+  }
+  const sorted = [...S.logs].sort((a,b)=>b.date!==a.date?b.date.localeCompare(a.date):b.loggedAt-a.loggedAt);
+  const groups = {};
+  sorted.slice(0,80).forEach(l=>{ (groups[l.date]??=[]).push(l); });
+  cont.innerHTML = Object.entries(groups).map(([date,logs])=>`
+    <div class="log-group">
+      <div class="log-group-label">${fmtDateLabel(date)}</div>
+      ${logs.map(l=>`
+        <div class="log-entry">
+          <div class="log-entry-ico">${ico('chef')}</div>
+          <div style="flex:1;min-width:0">
+            <div class="log-entry-name">${esc(l.dishName)}</div>
+          </div>
+          <button class="icon-btn del" data-action="dellog" data-id="${l.id}" aria-label="Remove">${ico('trash')}</button>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+/* ════════════════════════════════════════
+   RENDER: DASHBOARD
+════════════════════════════════════════ */
+function renderDash() { renderStats(); renderSuggestions(); renderDashRecent(); renderPopular(); }
+
+function renderStats() {
+  const now = new Date();
+  const mStart = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
+  const monthCount = S.logs.filter(l=>l.date>=mStart).length;
+  document.getElementById('statsRow').innerHTML = [
+    { ico:'chef', val:S.dishes.length, lbl:'Dishes in Menu',    col:'var(--primary)', bg:'var(--primary-light)' },
+    { ico:'cal',  val:monthCount,       lbl:'Cooks This Month',  col:'var(--accent)',  bg:'var(--accent-light)'  },
+    { ico:'bar',  val:S.logs.length,    lbl:'Total Cooks Logged',col:'var(--green)',   bg:'var(--green-bg)'      },
+  ].map(s=>`<div class="stat-card">
+    <div class="stat-icon" style="background:${s.bg};color:${s.col}">${ico(s.ico,18)}</div>
+    <div class="stat-val">${s.val}</div>
+    <div class="stat-lbl">${s.lbl}</div>
+  </div>`).join('');
+}
+
+function renderSuggestions() {
+  const cont = document.getElementById('sugGrid');
+  if (!S.dishes.length) {
+    cont.innerHTML = `<div class="empty" style="grid-column:1/-1;padding:24px 0"><p style="color:var(--text-3)">Add dishes to your menu to see suggestions here.</p></div>`;
+    return;
+  }
+  const sug = S.dishes
+    .map(d=>({ ...d, ds: (() => { const l=getLastCooked(d.id); return l ? daysSince(l) : Infinity; })() }))
+    .filter(d=>d.ds>=30)
+    .sort((a,b)=>b.ds-a.ds)
+    .slice(0,6);
+  if (!sug.length) {
+    cont.innerHTML = `<div class="empty" style="grid-column:1/-1;padding:24px 0">
+      <div class="empty-icon" style="background:var(--green-bg);color:var(--green)">${ico('check',26)}</div>
+      <h3>You're crushing it! 🎉</h3>
+      <p>All dishes cooked recently. Keep up the variety!</p>
+    </div>`;
+    return;
+  }
+  cont.innerHTML = sug.map(d=>{
+    const label = d.ds===Infinity ? 'Never cooked' : `${d.ds} days ago`;
+    const bcls  = d.ds===Infinity ? 'b-never' : 'b-old';
+    const hot   = d.ds===Infinity || d.ds>=60;
+    const loggedToday = S.logs.some(l=>l.date===todayStr()&&l.dishId===d.id);
+    return `<div class="sug-card ${hot?'hot':''}">
+      <div>
+        <div class="sug-name">${esc(d.name)}</div>
+        ${d.desc?`<div class="sug-desc">${esc(d.desc)}</div>`:''}
+      </div>
+      <div class="sug-foot">
+        <span class="badge ${bcls}">${ico('clock')} ${label}</span>
+        <button class="btn btn-sm btn-primary" data-action="quicklog" data-id="${d.id}" data-name="${esc(d.name)}" ${loggedToday?'disabled':''}>
+          ${loggedToday?'Logged ✓':'Log Today'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderDashRecent() {
+  const cont   = document.getElementById('dashRecent');
+  const recent = [...S.logs].sort((a,b)=>b.date!==a.date?b.date.localeCompare(a.date):b.loggedAt-a.loggedAt).slice(0,10);
+  if (!recent.length) {
+    cont.innerHTML = `<p style="color:var(--text-3);font-size:14px;padding:8px 0">No cooking logged yet.</p>`;
+    return;
+  }
+  cont.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px">${recent.map(l=>`
+    <div class="log-entry">
+      <div class="log-entry-ico">${ico('chef')}</div>
+      <div style="flex:1;min-width:0">
+        <div class="log-entry-name">${esc(l.dishName)}</div>
+        <div class="log-entry-meta">${fmtDateLabel(l.date)} · ${fmtShort(l.date)}</div>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+function renderPopular() {
+  const cont = document.getElementById('popList');
+  if (!S.logs.length) {
+    cont.innerHTML = `<p style="color:var(--text-3);font-size:14px;padding:8px 0">Start logging to see stats here!</p>`;
+    return;
+  }
+  const counts = {};
+  S.logs.forEach(l=>{ const k=l.dishId||l.dishName; if(!counts[k]) counts[k]={name:l.dishName,n:0}; counts[k].n++; });
+  const sorted = Object.values(counts).sort((a,b)=>b.n-a.n).slice(0,5);
+  const max    = sorted[0]?.n||1;
+  cont.innerHTML = sorted.map((item,i)=>`
+    <div class="pop-item">
+      <div class="pop-rank ${i===0?'gold':''}">${i+1}</div>
+      <div class="pop-name">${esc(item.name)}</div>
+      <div class="pop-bar-bg"><div class="pop-bar" style="width:${Math.round(item.n/max*100)}%"></div></div>
+      <div class="pop-count">${item.n}×</div>
+    </div>`).join('');
+}
+
+/* ════════════════════════════════════════
+   MODALS
+════════════════════════════════════════ */
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>{ const f=document.querySelector(`#${id} input,#${id} textarea`); if(f) f.focus(); },280);
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ════════════════════════════════════════
+   ADD / EDIT DISH
+════════════════════════════════════════ */
+let editingId = null;
+
+function openAddModal() {
+  editingId = null;
+  document.getElementById('dishModalTitle').textContent = 'Add Dish';
+  document.getElementById('saveDishBtn').textContent    = 'Save Dish';
+  document.getElementById('dishNameInp').value = '';
+  document.getElementById('dishDescInp').value = '';
+  openModal('dishModal');
+}
+
+function openEditModal(id) {
+  const d = S.dishes.find(x=>x.id===id); if (!d) return;
+  editingId = id;
+  document.getElementById('dishModalTitle').textContent = 'Edit Dish';
+  document.getElementById('saveDishBtn').textContent    = 'Save Changes';
+  document.getElementById('dishNameInp').value = d.name;
+  document.getElementById('dishDescInp').value = d.desc||'';
+  openModal('dishModal');
+}
+
+async function saveDish() {
+  const name = document.getElementById('dishNameInp').value.trim();
+  const desc = document.getElementById('dishDescInp').value.trim();
+  if (!name) {
+    const inp = document.getElementById('dishNameInp');
+    inp.style.borderColor='var(--red)'; inp.focus();
+    setTimeout(()=>inp.style.borderColor='',1500); return;
+  }
+  if (editingId) {
+    const d = S.dishes.find(x=>x.id===editingId);
+    if (d) {
+      d.name=name; d.desc=desc;
+      await dbPut('dishes', d);
+      // update any log entries
+      const updates = S.logs.filter(l=>l.dishId===editingId);
+      for (const l of updates) { l.dishName=name; await dbPut('logs',l); }
+    }
+    toast('Dish updated!');
+  } else {
+    const dish = { id:uid(), name, desc, createdAt:Date.now() };
+    S.dishes.push(dish);
+    await dbPut('dishes', dish);
+    toast('Dish added to your menu!');
+  }
+  closeModal('dishModal');
+  if (currentTab==='menu') renderMenu(document.getElementById('menuSearch').value);
+  if (currentTab==='dash') renderDash();
+}
+
+/* ════════════════════════════════════════
+   DELETE DISH
+════════════════════════════════════════ */
+function confirmDelDish(id) {
+  const d = S.dishes.find(x=>x.id===id); if (!d) return;
+  document.getElementById('confirmMsg').innerHTML = `This will remove <strong>${esc(d.name)}</strong> from your menu. Cook log entries will stay.`;
+  openModal('confirmModal');
+  document.getElementById('confirmOkBtn').onclick = async () => {
+    S.dishes = S.dishes.filter(x=>x.id!==id);
+    await dbDel('dishes', id);
+    closeModal('confirmModal');
+    toast('Dish removed.');
+    if (currentTab==='menu') renderMenu(document.getElementById('menuSearch').value);
+    if (currentTab==='dash') renderDash();
+  };
+}
+
+/* ════════════════════════════════════════
+   COMBO / LOG
+════════════════════════════════════════ */
+let selectedDishId = null;
+
+function setupCombo() {
+  const input = document.getElementById('logInput');
+  const drop  = document.getElementById('comboDrop');
+
+  input.addEventListener('input', () => {
+    selectedDishId = null;
+    const q = input.value.toLowerCase().trim();
+    if (!q) { drop.classList.remove('open'); drop.innerHTML=''; return; }
+    const matches = S.dishes.filter(d=>d.name.toLowerCase().includes(q)).slice(0,8);
+    if (!matches.length) {
+      drop.innerHTML = `<div class="combo-opt freeOpt">${ico('plus')} <span>Log "<strong>${esc(input.value)}</strong>"</span></div>`;
+    } else {
+      drop.innerHTML = matches.map(d=>{
+        const b = lastCookedBadge(d.id);
+        return `<div class="combo-opt" data-id="${d.id}" data-name="${esc(d.name)}">${ico('chef')}<div><div>${esc(d.name)}</div><div class="combo-sub">${b.text}</div></div></div>`;
+      }).join('');
+      drop.querySelectorAll('.combo-opt[data-id]').forEach(opt=>{
+        opt.addEventListener('mousedown', e=>{ e.preventDefault(); input.value=opt.dataset.name; selectedDishId=opt.dataset.id; drop.classList.remove('open'); });
+        opt.addEventListener('touchend',  e=>{ e.preventDefault(); input.value=opt.dataset.name; selectedDishId=opt.dataset.id; drop.classList.remove('open'); input.blur(); });
+      });
+    }
+    drop.classList.add('open');
+  });
+  input.addEventListener('blur',  ()=>setTimeout(()=>drop.classList.remove('open'),200));
+  input.addEventListener('focus', ()=>{ if(input.value.trim()) input.dispatchEvent(new Event('input')); });
+}
+
+async function doLog() {
+  const input  = document.getElementById('logInput');
+  const dateEl = document.getElementById('logDate');
+  const name   = input.value.trim();
+  const date   = dateEl.value || todayStr();
+  if (!name) { input.focus(); return; }
+  if (selectedDishId && S.logs.some(l=>l.date===date&&l.dishId===selectedDishId)) {
+    toast('Already logged for this date!','err'); return;
+  }
+  const entry = { id:uid(), dishId:selectedDishId||null, dishName:name, date, loggedAt:Date.now() };
+  S.logs.push(entry);
+  await dbPut('logs', entry);
+  toast(`"${name}" logged!`);
+  input.value=''; selectedDishId=null; dateEl.value=todayStr();
+  document.getElementById('comboDrop').classList.remove('open');
+  renderLogHistory();
+  if (currentTab==='menu') renderMenu(document.getElementById('menuSearch').value);
+}
+
+async function quickLog(id, name) {
+  const t = todayStr();
+  if (S.logs.some(l=>l.date===t&&l.dishId===id)) { toast('Already logged today!','err'); return; }
+  const entry = { id:uid(), dishId:id, dishName:name, date:t, loggedAt:Date.now() };
+  S.logs.push(entry);
+  await dbPut('logs', entry);
+  toast(`"${name}" logged!`);
+  if (currentTab==='menu') renderMenu(document.getElementById('menuSearch').value);
+  if (currentTab==='dash') renderDash();
+  if (currentTab==='log')  renderLogHistory();
+}
+
+async function delLog(id) {
+  S.logs = S.logs.filter(l=>l.id!==id);
+  await dbDel('logs', id);
+  toast('Entry removed.');
+  renderLogHistory();
+  if (currentTab==='dash') renderDash();
+}
+
+/* ════════════════════════════════════════
+   DELEGATED EVENTS
+════════════════════════════════════════ */
+document.addEventListener('click', e=>{
+  const tab     = e.target.closest('[data-tab]');     if (tab)    { switchTab(tab.dataset.tab); return; }
+  const closer  = e.target.closest('[data-close]');   if (closer) { closeModal(closer.dataset.close); return; }
+  if (e.target.classList.contains('modal-bg'))        { closeModal(e.target.id); return; }
+  const action  = e.target.closest('[data-action]');
+  if (action) {
+    const { action:act, id, name } = action.dataset;
+    if (act==='edit')     { openEditModal(id); return; }
+    if (act==='del')      { confirmDelDish(id); return; }
+    if (act==='quicklog') { quickLog(id, name); return; }
+    if (act==='dellog')   { delLog(id); return; }
+  }
+});
+
+document.addEventListener('keydown', e=>{
+  if (e.key==='Escape') document.querySelectorAll('.modal-bg.open').forEach(m=>closeModal(m.id));
+});
+
+/* ════════════════════════════════════════
+   INIT
+════════════════════════════════════════ */
+async function init() {
+  try {
+    db = await openDB();
+    await loadAll();
+  } catch(err) {
+    console.error('DB error, falling back to empty state', err);
+  }
+
+  // Hide loading screen
+  document.getElementById('appLoading').style.display = 'none';
+
+  // Wire buttons
+  document.getElementById('hdrAddBtn').addEventListener('click', openAddModal);
+  document.getElementById('tabAddBtn').addEventListener('click', openAddModal);
+  document.getElementById('fabBtn').addEventListener('click', openAddModal);
+  document.getElementById('saveDishBtn').addEventListener('click', saveDish);
+  document.getElementById('logBtn').addEventListener('click', doLog);
+  document.getElementById('menuSearch').addEventListener('input', e=>renderMenu(e.target.value));
+  document.getElementById('dishNameInp').addEventListener('keydown', e=>{ if(e.key==='Enter') saveDish(); });
+  document.getElementById('logInput').addEventListener('keydown', e=>{ if(e.key==='Enter') doLog(); });
+
+  // Combo + dates
+  setupCombo();
+  document.getElementById('logDate').value = todayStr();
+  document.getElementById('logHeroDate').textContent =
+    new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+
+  // Initial render
+  renderMenu();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
