@@ -384,16 +384,24 @@ body {
 .active-chip svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:.8}
 .clear-all-chip{display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--surface-2);color:var(--text-2);border:1.5px solid var(--border);cursor:pointer;touch-action:manipulation}
 .clear-all-chip:hover{background:var(--red-bg);color:var(--red);border-color:var(--red)}
-.menu-bottom-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;margin-top:10px;gap:8px;min-height:28px}
+.sort-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.sort-btn{
+  padding:12px 16px;border-radius:10px;border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text-2);font-family:inherit;font-size:14px;
+  font-weight:600;cursor:pointer;transition:all var(--t);white-space:nowrap;
+  text-align:center;touch-action:manipulation;
+}
+.sort-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.sort-btn.active{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.count-chips-row{display:flex;align-items:center;gap:8px;margin-top:10px;margin-bottom:18px;min-height:28px}
 
 
 /* ── PERSISTENT FILTER CHIPS BAR ────────── */
 .filter-chips-bar{
   display:flex;align-items:center;gap:8px;
-  overflow-x:auto;padding:10px 0 4px;
+  overflow-x:auto;padding:0;flex:1;
   scrollbar-width:none;flex-wrap:nowrap;
 }
-.filter-chips-bar:empty{padding:0}
 .filter-chips-bar::-webkit-scrollbar{display:none}
 .pchip{
   display:inline-flex;align-items:center;padding:7px 14px;
@@ -547,20 +555,19 @@ body {
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input class="form-input" type="search" id="menuSearch" placeholder="Search your dishes…" autocomplete="off" aria-label="Search dishes">
           </div>
-          <button class="filter-icon-btn" id="filterBtn" aria-label="Sort and filter">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
-            <span id="filterBtnLabel">Sort &amp; Filter</span>
-            <div class="filter-badge" id="filterBadge" style="display:none"></div>
-          </button>
-        </div>
-        <!-- Persistent filter chips row -->
-        <div class="filter-chips-bar" id="filterChipsBar"></div>
-        <div class="menu-bottom-bar">
-          <span class="dish-count-label" id="dishCountLbl"></span>
-          <button class="btn btn-primary btn-sm" id="tabAddBtn">
+          <button class="btn btn-primary" id="tabAddBtn" style="height:47px;flex-shrink:0">
             <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Add Dish
           </button>
+        </div>
+        <!-- Sort row -->
+        <div class="sort-row">
+          <button class="sort-btn active" id="sortOldestBtn" data-sort="oldest">Oldest Cook First</button>
+          <button class="sort-btn" id="sortAZBtn" data-sort="az">A → Z</button>
+        </div>
+        <!-- Count + persistent filter chips row (count scrolls with chips) -->
+        <div class="count-chips-row">
+          <div class="filter-chips-bar" id="filterChipsBar"></div>
         </div>
         <div class="dish-grid" id="dishGrid" role="list" aria-label="Your dishes"></div>
       </div>
@@ -693,30 +700,6 @@ body {
   </div>
 </div>
 
-<!-- MODAL: SORT & FILTER SHEET -->
-<div class="modal-bg" id="filterModal" role="dialog" aria-modal="true">
-  <div class="modal" style="max-width:460px">
-    <div class="modal-head">
-      <h2 class="modal-title">Sort &amp; Filter</h2>
-      <button class="icon-btn" data-close="filterModal" aria-label="Close">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="sheet-section">
-      <div class="sheet-section-title">Sort by</div>
-      <div class="sort-options" id="sortOptions"></div>
-    </div>
-    <div class="sheet-divider"></div>
-    <div class="sheet-section" style="padding-bottom:8px">
-      <div class="sheet-section-title">Filter by tag</div>
-      <div class="filter-chips-grid" id="filterChipsGrid"></div>
-    </div>
-    <div class="modal-foot" style="padding-top:16px">
-      <button class="btn btn-ghost" id="clearFiltersBtn">Clear All</button>
-      <button class="btn btn-primary" data-close="filterModal">Apply</button>
-    </div>
-  </div>
-</div>
 
 <!-- MODAL: QUICK LOG SHEET (FAB) -->
 <div class="modal-bg" id="logSheetModal" role="dialog" aria-modal="true">
@@ -942,7 +925,6 @@ function switchTab(tab) {
 ════════════════════════════════════════ */
 function renderMenu(q='') {
   const grid  = document.getElementById('dishGrid');
-  const lbl   = document.getElementById('dishCountLbl');
   const query = q.toLowerCase().trim();
   let dishes  = [...S.dishes];
   if (query) dishes = dishes.filter(d=>d.name.toLowerCase().includes(query)||(d.desc||'').toLowerCase().includes(query));
@@ -954,8 +936,8 @@ function renderMenu(q='') {
     });
   }
   dishes = sortDishes(dishes);
-  renderFilterChipsBar();
-  lbl.textContent = S.dishes.length ? `${dishes.length} of ${S.dishes.length} dish${S.dishes.length!==1?'es':''}` : '';
+  const countText = S.dishes.length ? `${dishes.length} of ${S.dishes.length} dish${S.dishes.length!==1?'es':''}` : '';
+  renderFilterChipsBar(countText);
   if (!S.dishes.length) {
     grid.innerHTML = `<div class="empty">
       <div class="empty-icon">${ico('chef',28)}</div>
@@ -1235,31 +1217,16 @@ function sortDishes(dishes) {
 /* ════════════════════════════════════════
    ACTIVE CHIPS
 ════════════════════════════════════════ */
-function renderFilterChipsBar() {
-  const bar   = document.getElementById('filterChipsBar');
-  const btn   = document.getElementById('filterBtn');
-  const lbl   = document.getElementById('filterBtnLabel');
-  const badge = document.getElementById('filterBadge');
-  const tags  = allTags();
-
-  // Only show bar if there are tags to display
-  if (!tags.length) { bar.innerHTML = ''; return; }
-
-  bar.innerHTML = tags.map(t =>
+function renderFilterChipsBar(countText) {
+  const bar  = document.getElementById('filterChipsBar');
+  const tags = allTags();
+  const countHtml = countText
+    ? `<span class="dish-count-label" style="flex-shrink:0">${countText}</span>`
+    : '';
+  if (!tags.length) { bar.innerHTML = countHtml; return; }
+  bar.innerHTML = countHtml + tags.map(t =>
     `<button class="pchip ${activeFilters.includes(t.id)?'active':''}" data-ptag="${t.id}">${t.label}</button>`
   ).join('');
-
-  // Update filter button badge
-  const total = (activeSort !== 'oldest' ? 1 : 0) + activeFilters.length;
-  if (total > 0) {
-    btn.classList.add('has-active');
-    badge.style.display = 'flex'; badge.textContent = total;
-    lbl.textContent = 'Filtered';
-  } else {
-    btn.classList.remove('has-active');
-    badge.style.display = 'none';
-    lbl.textContent = 'Sort & Filter';
-  }
 }
 
 /* ════════════════════════════════════════
@@ -1289,43 +1256,13 @@ function bindTagPicker() {
     selectedDishTagIds.push(newTag.id);
     inp.value = '';
     renderTagPicker();
-    renderFilterChipsBar();
-    if (document.getElementById('filterModal').classList.contains('open')) renderFilterSheet();
+    renderMenu(document.getElementById('menuSearch').value);
   });
   document.getElementById('newTagInp').addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); document.getElementById('addTagBtn').click(); }
   });
 }
 
-/* ════════════════════════════════════════
-   SORT & FILTER SHEET
-════════════════════════════════════════ */
-function renderFilterSheet() {
-  document.getElementById('sortOptions').innerHTML = SORT_OPTS.map(o=>`
-    <div class="sort-opt ${activeSort===o.id?'selected':''}" data-sortid="${o.id}">
-      <div class="sort-opt-radio"></div>
-      <div><div class="sort-opt-label">${o.label}</div><div class="sort-opt-sub">${o.sub}</div></div>
-    </div>`).join('');
-  document.querySelectorAll('[data-sortid]').forEach(el => {
-    el.addEventListener('click', () => {
-      activeSort = el.dataset.sortid;
-      document.querySelectorAll('[data-sortid]').forEach(x=>x.classList.toggle('selected', x.dataset.sortid===activeSort));
-    });
-  });
-  document.getElementById('filterChipsGrid').innerHTML = allTags().map(t=>
-    `<button class="filter-chip-btn ${activeFilters.includes(t.id)?'active':''}" data-filterid="${t.id}">${t.label}</button>`
-  ).join('');
-  document.querySelectorAll('[data-filterid]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const fid = btn.dataset.filterid;
-      if (activeFilters.includes(fid)) activeFilters = activeFilters.filter(x=>x!==fid);
-      else activeFilters.push(fid);
-      btn.classList.toggle('active', activeFilters.includes(fid));
-    });
-  });
-}
-
-function openFilterSheet() { renderFilterSheet(); openModal('filterModal'); }
 
 /* ════════════════════════════════════════
    FAB LOG SHEET
@@ -1462,7 +1399,13 @@ async function quickLog(id, name) {
   S.logs.push(entry);
   await dbPut('logs', entry);
   toast(`"${name}" logged!`);
-  if (currentTab==='menu') renderMenu(document.getElementById('menuSearch').value);
+  // Patch every "Log Today" button for this dish in the DOM without re-rendering
+  document.querySelectorAll(`[data-action="quicklog"][data-id="${id}"]`).forEach(btn => {
+    btn.classList.remove('btn-primary');
+    btn.classList.add('btn-ghost');
+    btn.disabled = true;
+    btn.innerHTML = `${ico('check')} Logged`;
+  });
   if (currentTab==='dash') renderDash();
   if (currentTab==='log')  renderLogHistory();
 }
@@ -1482,12 +1425,10 @@ document.addEventListener('click', e=>{
   const tab     = e.target.closest('[data-tab]');     if (tab)    { switchTab(tab.dataset.tab); return; }
   const closer  = e.target.closest('[data-close]');   if (closer) {
     closeModal(closer.dataset.close);
-    if (closer.dataset.close === 'filterModal') renderMenu(document.getElementById('menuSearch').value);
     return;
   }
   if (e.target.classList.contains('modal-bg')) {
     const mid = e.target.id; closeModal(mid);
-    if (mid === 'filterModal') renderMenu(document.getElementById('menuSearch').value);
     return;
   }
   // Persistent filter chip toggle
@@ -1500,14 +1441,6 @@ document.addEventListener('click', e=>{
     return;
   }
 
-  const cf = e.target.closest('[data-clearfilter]');
-  if (cf) {
-    const v = cf.dataset.clearfilter;
-    if (v==='all') { activeSort='oldest'; activeFilters=[]; }
-    else if (v.startsWith('tag:')) { activeFilters=activeFilters.filter(x=>x!==v.slice(4)); }
-    renderMenu(document.getElementById('menuSearch').value);
-    return;
-  }
   const action  = e.target.closest('[data-action]');
   if (action) {
     const { action:act, id, name } = action.dataset;
@@ -1545,12 +1478,13 @@ async function init() {
   document.getElementById('menuSearch').addEventListener('input', e=>renderMenu(e.target.value));
   document.getElementById('dishNameInp').addEventListener('keydown', e=>{ if(e.key==='Enter') saveDish(); });
 
-  // Filter sheet
-  document.getElementById('filterBtn').addEventListener('click', openFilterSheet);
-  document.getElementById('clearFiltersBtn').addEventListener('click', () => {
-    activeSort='oldest'; activeFilters=[];
-    renderFilterSheet();
-    renderMenu(document.getElementById('menuSearch').value);
+  // Sort buttons
+  document.querySelectorAll('.sort-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeSort = btn.dataset.sort;
+      document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active', b.dataset.sort === activeSort));
+      renderMenu(document.getElementById('menuSearch').value);
+    });
   });
 
   // FAB log sheet
